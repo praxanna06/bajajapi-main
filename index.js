@@ -3,86 +3,78 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3500;
+const port = process.env.PORT || 3500;
 
 app.use(cors());
 app.use(express.json());
 
-function generateUserId(nameInput = 'john_doe', birthDate = '17091999') {
-  const formattedName = String(nameInput)
+function buildUserId(fullName = 'john_doe', dob = '17091999') {
+  const name = String(fullName)
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '_')
     .replace(/[^a-z0-9_]/g, '');
-  const numericDob = String(birthDate).replace(/\D/g, '');
-  const dobFormatted = numericDob.length === 8 ? numericDob : birthDate;
-  return `${formattedName}_${dobFormatted}`;
+  const digits = String(dob).replace(/\D/g, '');
+  const ddmmyyyy = digits.length === 8 ? digits : dob;
+  return `${name}_${ddmmyyyy}`;
 }
 
 app.post('/bfhl', (req, res) => {
   try {
-    const { data: inputArray } = req.body;
-    if (!Array.isArray(inputArray)) {
+    const { data } = req.body;
+    if (!Array.isArray(data)) {
       return res.status(400).json({ is_success: false, message: 'Invalid data format: "data" must be an array' });
     }
 
-    const evens = [];
-    const odds = [];
-    const letters = [];
-    const symbols = [];
-    let totalSum = 0;
-    const letterOrder = [];
+    const even_numbers = [];
+    const odd_numbers = [];
+    const alphabets = [];
+    const special_characters = [];
+    let sum = 0;
+    const letterSequence = [];
 
-    for (const element of inputArray) {
-      const token = String(element).trim();
+    for (const item of data) {
+      const token = String(item).trim();
       if (/^[+-]?\d+$/.test(token)) {
-        const num = parseInt(token, 10);
-        if (Math.abs(num) % 2 === 0) {
-          evens.push(token);
+        const n = parseInt(token, 10);
+        if (Math.abs(n) % 2 === 0) {
+          even_numbers.push(token);
         } else {
-          odds.push(token);
+          odd_numbers.push(token);
         }
-        totalSum += num;
+        sum += n;
       } else if (/^[a-zA-Z]+$/.test(token)) {
-        letters.push(token.toUpperCase());
-        for (const ch of token) letterOrder.push(ch);
+        alphabets.push(token.toUpperCase());
+        for (const ch of token) letterSequence.push(ch);
       } else {
-        if (token.length > 0) symbols.push(token);
+        if (token.length > 0) special_characters.push(token);
       }
     }
 
-    const reversedLetters = letterOrder.reverse();
-    const alternatingCaseLetters = reversedLetters.map((ch, idx) =>
-      idx % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()
-    );
-    const combinedString = alternatingCaseLetters.join('');
+    const reversedLetters = letterSequence.reverse();
+    const concatArr = reversedLetters.map((ch, idx) => (idx % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()));
+    const concat_string = concatArr.join('');
 
-    const responsePayload = {
+    const response = {
       is_success: true,
-      user_id: generateUserId(process.env.FULL_NAME || 'john_doe', process.env.DOB || '17091999'),
+      user_id: buildUserId(process.env.FULL_NAME || 'john_doe', process.env.DOB || '17091999'),
       email: process.env.EMAIL_ID || 'john@xyz.com',
       roll_number: process.env.REG_NO || 'ABCD123',
-      odd_numbers: odds,
-      even_numbers: evens,
-      alphabets: letters,
-      special_characters: symbols,
-      sum: String(totalSum),
-      concat_string: combinedString
+      odd_numbers,
+      even_numbers,
+      alphabets,
+      special_characters,
+      sum: String(sum),
+      concat_string
     };
 
-    return res.status(200).json(responsePayload);
+    return res.status(200).json(response);
   } catch (err) {
     console.error('Error in /bfhl:', err);
     return res.status(500).json({ is_success: false, message: 'Internal server error' });
   }
 });
 
-app.get('/bfhl', (req, res) => {
-  return res.status(200).json({
-    is_success: true,
-    user_id: generateUserId(process.env.FULL_NAME || 'john_doe', process.env.DOB || '17091999')
-  });
-});
+app.get('/bfhl', (req, res) => res.status(200).json({ operation_code: 1 }));
 
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));
