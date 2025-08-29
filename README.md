@@ -1,85 +1,124 @@
-BFHL API
 
-Small Express API that implements the required /bfhl POST endpoint.
-Accepts a JSON body with a single key data (an array of tokens) and returns analyses: even/odd numbers, alphabets (uppercase), special characters, sum (string), and concat_string per the assignment spec.
+Here’s a **README.md** file you can use for your project:
 
-Live endpoint (use this for submission)
+---
 
-POST https://bajajapi-vflx.onrender.com/bfhl
+# BFHL API
 
-Example:
+A simple Express.js API that processes an array of mixed data (numbers, alphabets, special characters) and returns structured results including odd/even separation, alphabets in uppercase, special characters, sum of numbers, and a formatted concatenated string.
 
-curl -X POST https://bajajapi-vflx.onrender.com/bfhl \
-  -H "Content-Type: application/json" \
-  -d '{"data":["a","1","334","4","R","$"]}'
+## 🚀 Features
 
-Quick start (local)
+* Separate **odd and even numbers**
+* Extract and uppercase **alphabets**
+* Identify **special characters**
+* Compute **sum of numbers**
+* Generate **concatenated alternating-case string** from letters
+* User identification via environment variables
 
-Clone the repo:
+---
 
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+## 📦 Installation
 
+Clone the repository and install dependencies:
 
-Install dependencies:
-
+```bash
+git clone <your-repo-url>
+cd <your-repo-folder>
 npm install
+```
 
+Create a `.env` file in the root directory with the following variables:
 
-Create a .env file (or set environment variables). Example .env:
-
-FULL_NAME=Your Name Here
-DOB=ddmmyyyy
-EMAIL_ID=you@example.com
-REG_NO=ABCD123
+```env
 PORT=3500
+FULL_NAME=John Doe
+DOB=17091999
+EMAIL_ID=john@xyz.com
+REG_NO=ABCD123
+```
 
+---
+
+## ▶️ Running the Server
 
 Start the server:
 
+```bash
 npm start
+```
 
+By default, it runs on `http://localhost:3500`.
 
-Local testing:
+---
 
-curl -X POST http://localhost:3500/bfhl \
-  -H "Content-Type: application/json" \
-  -d '{"data":["a","1","334","4","R","$"]}'
+## 📡 API Endpoints
 
-Request / Response
-Request
+### **GET /bfhl**
 
-Method: POST
+Health check endpoint.
 
-URL: https://<your-host>/bfhl (local: http://localhost:3500/bfhl)
+**Response:**
 
-Header: Content-Type: application/json
-
-Body:
-
+```json
 {
-  "data": ["a", "1", "334", "4", "R", "$"]
+  "operation_code": 1
 }
+```
 
-Successful Response (HTTP 200)
+---
+
+### **POST /bfhl**
+
+Processes an input array.
+
+**Request Body:**
+
+```json
+{
+  "data": ["A", "1", "2", "b", "@", "9"]
+}
+```
+
+**Response:**
+
+```json
 {
   "is_success": true,
   "user_id": "john_doe_17091999",
   "email": "john@xyz.com",
   "roll_number": "ABCD123",
-  "odd_numbers": ["1"],
-  "even_numbers": ["334","4"],
-  "alphabets": ["A","R"],
-  "special_characters": ["$"],
-  "sum": "339",
-  "concat_string": "Ra"
+  "odd_numbers": ["1", "9"],
+  "even_numbers": ["2"],
+  "alphabets": ["A", "B"],
+  "special_characters": ["@"],
+  "sum": "12",
+  "concat_string": "bA"
 }
+```
 
-Error example (bad input)
+---
 
-If data is not an array:
+## ⚙️ Utility Function
 
-{
-  "is_success": false,
-  "message": "Invalid data format: \"data\" must be an array"
-}
+The project includes a `generateUserId(name, dob)` function to create a unique user ID:
+
+* Converts name to lowercase with underscores
+* Strips unwanted characters
+* Appends formatted DOB
+
+Example:
+
+```js
+generateUserId("John Doe", "17-09-1999");
+// Output: "john_doe_17091999"
+```
+
+---
+
+## 🛠 Tech Stack
+
+* [Node.js](https://nodejs.org/)
+* [Express.js](https://expressjs.com/)
+* [dotenv](https://www.npmjs.com/package/dotenv)
+* [CORS](https://www.npmjs.com/package/cors)
