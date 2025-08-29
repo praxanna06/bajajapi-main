@@ -78,10 +78,11 @@ app.post('/bfhl', (req, res) => {
 });
 
 app.get('/bfhl', (req, res) => {
-return res.status(200).json({
-is_success: true,
-user_id: buildUserId(process.env.FULL_NAME || 'john_doe', process.env.DOB || '17091999')
+  return res.status(200).json({
+    is_success: true,
+    user_id: generateUserId(process.env.FULL_NAME || 'john_doe', process.env.DOB || '17091999')
+  });
 });
-});
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
