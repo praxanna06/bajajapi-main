@@ -1,8 +1,4 @@
 
-Here’s a **README.md** file you can use for your project:
-
----
-
 # BFHL API
 
 A simple Express.js API that processes an array of mixed data (numbers, alphabets, special characters) and returns structured results including odd/even separation, alphabets in uppercase, special characters, sum of numbers, and a formatted concatenated string.
